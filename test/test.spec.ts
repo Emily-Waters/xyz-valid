@@ -45,14 +45,14 @@ describe("Parse", () => {
     it("should error", () => {
       const throwable = () => {
         const o = { id: 1 };
-        xyz.object({ id: xyz.string() }).parse(o);
+        const r = xyz.object({ id: xyz.string() }).parse(o);
       };
 
       expect(throwable).toThrow();
 
       const throwable2 = () => {
         const o = {};
-        xyz.object({ id: xyz.string() }).parse(o);
+        const r = xyz.object({ id: xyz.string() }).parse(o);
       };
 
       expect(throwable2).toThrow();
@@ -60,7 +60,7 @@ describe("Parse", () => {
 
     it("should allow optional", () => {
       const nonthrowable = () => {
-        xyz.object({ id: xyz.string() }).optional().parse(undefined);
+        const r = xyz.object({ id: xyz.string() }).optional().parse(undefined);
       };
 
       expect(nonthrowable).not.toThrow();

@@ -1,9 +1,22 @@
 import XYZObject from "./object";
 import XYZString from "./string";
+import XYZOptional from "./optional";
+import XYZErrors from "./errors";
+
+export type Primitives = "string" | "object" | "undefined";
 export class XYZType<Input = any, Output = any> {
+  primitive: Primitives;
   isOptional: boolean = false;
   checks: ((value: Input) => void)[] = [];
   errors: string[] = [];
+
+  protected typeCheck = (value: Input) => {
+    if (this.isOptional && value === undefined) {
+      this.checks = [];
+    } else if (this.primitive !== typeof value) {
+      this.errors.push(XYZErrors.invalidType(this.primitive, typeof value));
+    }
+  };
 
   string() {
     return XYZString.create();
@@ -14,15 +27,11 @@ export class XYZType<Input = any, Output = any> {
   }
 
   optional() {
-    this.isOptional = true;
-    return this;
+    return XYZOptional.create();
   }
 
   _parse(value: Input) {
-    if (value === undefined && this.isOptional) {
-      return this;
-    }
-
+    this.typeCheck(value);
     this.checks.forEach((check) => check(value));
 
     return this;
