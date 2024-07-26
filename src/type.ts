@@ -2,8 +2,9 @@ import XYZObject from "./object";
 import XYZString from "./string";
 import XYZOptional from "./optional";
 import XYZErrors from "./errors";
+import XYZNumber from "./number";
 
-export type Primitives = "string" | "object" | "undefined";
+export type Primitives = "string" | "object" | "undefined" | "number";
 export class XYZType<Input = any, Output = any> {
   primitive: Primitives;
   isOptional: boolean = false;
@@ -24,6 +25,10 @@ export class XYZType<Input = any, Output = any> {
 
   object<Shape extends { [x: string]: XYZType }>(shape: Shape) {
     return XYZObject.create(shape);
+  }
+
+  number() {
+    return XYZNumber.create();
   }
 
   optional() {
