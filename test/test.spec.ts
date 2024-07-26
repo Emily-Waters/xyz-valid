@@ -19,7 +19,7 @@ describe("Parse", () => {
 
     it("should allow optional", () => {
       const nonthrowable = () => {
-        xyz.string().optional().parse(undefined);
+        const r = xyz.string().optional().parse(undefined);
       };
 
       expect(nonthrowable).not.toThrow();

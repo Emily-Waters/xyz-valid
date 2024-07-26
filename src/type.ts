@@ -9,7 +9,7 @@ export class XYZType<Input = any, Output = any> {
     return XYZString.create();
   }
 
-  object(shape: Parameters<typeof XYZObject.create>[0]) {
+  object<Shape extends { [x: string]: XYZType }>(shape: Shape) {
     return XYZObject.create(shape);
   }
 
