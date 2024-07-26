@@ -13,10 +13,17 @@ export class XYZType<Input = any, Output = any> {
     return XYZObject.create(shape);
   }
 
+  optional() {
+    this.isOptional = true;
+    return this;
+  }
+
   _parse(value: Input) {
-    if (!this.isOptional && value !== undefined) {
-      this.checks.forEach((check) => check(value));
+    if (value === undefined && this.isOptional) {
+      return this;
     }
+
+    this.checks.forEach((check) => check(value));
 
     return this;
   }
@@ -28,6 +35,6 @@ export class XYZType<Input = any, Output = any> {
       throw new Error(this.errors.join("\n"));
     }
 
-    return value;
+    return value as unknown as Output;
   }
 }

@@ -16,6 +16,22 @@ describe("Parse", () => {
 
       expect(throwable).toThrow();
     });
+
+    it("should allow optional", () => {
+      const nonthrowable = () => {
+        xyz.string().optional().parse(undefined);
+      };
+
+      expect(nonthrowable).not.toThrow();
+    });
+
+    it("should error on optional with bad value", () => {
+      const throwable = () => {
+        xyz.string().optional().parse(1);
+      };
+
+      expect(throwable).toThrow();
+    });
   });
 
   describe("Object", () => {
@@ -33,6 +49,37 @@ describe("Parse", () => {
       };
 
       expect(throwable).toThrow();
+
+      const throwable2 = () => {
+        const o = {};
+        xyz.object({ id: xyz.string() }).parse(o);
+      };
+
+      expect(throwable2).toThrow();
+    });
+
+    it("should allow optional", () => {
+      const nonthrowable = () => {
+        xyz.object({ id: xyz.string() }).optional().parse(undefined);
+      };
+
+      expect(nonthrowable).not.toThrow();
+    });
+
+    it("should error on optional with bad value", () => {
+      const throwable = () => {
+        xyz.object({ id: xyz.string() }).optional().parse({ id: 1 });
+      };
+
+      expect(throwable).toThrow();
+    });
+
+    it("should allow nested optional properties", () => {
+      const nonthrowable = () => {
+        xyz.object({ id: xyz.string().optional() }).parse({});
+      };
+
+      expect(nonthrowable).not.toThrow();
     });
   });
 });

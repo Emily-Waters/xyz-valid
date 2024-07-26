@@ -8,16 +8,20 @@ function create(shape: Shape) {
       super();
     }
 
-    parse(input) {
-      for (const key in this.shape) {
-        this.errors.push(...this.shape[key]._parse(input[key]).errors);
-      }
+    parse(value) {
+      if (this.isOptional && value === undefined) {
+        return value;
+      } else {
+        for (const key in this.shape) {
+          this.errors.push(...this.shape[key]._parse(value[key]).errors);
+        }
 
-      if (this.errors.length) {
-        throw new Error(this.errors.join("\n"));
-      }
+        if (this.errors.length) {
+          throw new Error(this.errors.join("\n"));
+        }
 
-      return input;
+        return value;
+      }
     }
   }
 
