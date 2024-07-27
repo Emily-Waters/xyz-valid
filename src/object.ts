@@ -8,7 +8,11 @@ function create<Shape extends { [x: string]: XYZType }>(shape: Shape) {
 
       this.checks.push((value) => {
         for (const key in shape) {
-          this.errors.push(...this.shape[key]._parse(value[key]).errors);
+          const errors = this.shape[key].safeParse(value[key]).errors;
+
+          if (errors) {
+            this.errors.push(...errors);
+          }
         }
       });
     }

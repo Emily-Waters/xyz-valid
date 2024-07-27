@@ -46,18 +46,22 @@ export class XYZType<Input = any, Output = any> {
     return XYZTransform.create(this.primitive, transform);
   }
 
-  _parse(value: Input) {
+  safeParse(value) {
     this.typeCheck(value);
 
     if (!this.errors.length) {
       this.checks.forEach((check) => check(value));
     }
 
-    return this;
+    if (this.errors.length) {
+      return { errors: this.errors, value };
+    } else {
+      return { value };
+    }
   }
 
   parse(value: Input) {
-    this._parse(value);
+    this.safeParse(value);
 
     if (this.errors.length) {
       throw new Error(this.errors.join("\n"));
