@@ -9,12 +9,12 @@ describe("Parse", () => {
       expect(r).toBe(s);
     });
 
-    it("should error", () => {
+    it("should throw type error", () => {
       const throwable = () => {
         const x = xyz.string().parse(1);
       };
 
-      expect(throwable).toThrow();
+      expect(throwable).toThrow(/Invalid Type:/);
     });
 
     it("should allow optional", () => {
@@ -25,12 +25,12 @@ describe("Parse", () => {
       expect(nonthrowable).not.toThrow();
     });
 
-    it("should error on optional with bad value", () => {
+    it("should throw type error on optional with invalid type", () => {
       const throwable = () => {
         xyz.string().optional().parse(1);
       };
 
-      expect(throwable).toThrow();
+      expect(throwable).toThrow(/Invalid Type:/);
     });
   });
 
@@ -42,20 +42,20 @@ describe("Parse", () => {
       expect(r).toMatchObject(o);
     });
 
-    it("should error", () => {
+    it("should throw type error", () => {
       const throwable = () => {
         const o = { id: 1 };
         const r = xyz.object({ id: xyz.string() }).parse(o);
       };
 
-      expect(throwable).toThrow();
+      expect(throwable).toThrow(/Invalid Type:/);
 
       const throwable2 = () => {
         const o = {};
         const r = xyz.object({ id: xyz.string() }).parse(o);
       };
 
-      expect(throwable2).toThrow();
+      expect(throwable2).toThrow(/Invalid Type:/);
     });
 
     it("should allow optional", () => {
@@ -66,12 +66,12 @@ describe("Parse", () => {
       expect(nonthrowable).not.toThrow();
     });
 
-    it("should error on optional with bad value", () => {
+    it("should throw type error on nested property", () => {
       const throwable = () => {
         xyz.object({ id: xyz.string() }).optional().parse({ id: 1 });
       };
 
-      expect(throwable).toThrow();
+      expect(throwable).toThrow(/Invalid Type:/);
     });
 
     it("should allow nested optional properties", () => {
@@ -91,13 +91,20 @@ describe("Parse", () => {
       expect(r).toBe(n);
     });
 
-    it("should error", () => {
+    it("should throw type error", () => {
       const throwable = () => {
         const n = "5";
         xyz.number().parse(n);
       };
 
-      expect(throwable).toThrow();
+      expect(throwable).toThrow(/Invalid Type:/);
+
+      const throwable2 = () => {
+        const n = "5";
+        xyz.number().min(1).max(2).parse(n);
+      };
+
+      expect(throwable2).toThrow(/Invalid Type:/);
     });
 
     it("should allow optional", () => {
@@ -116,18 +123,18 @@ describe("Parse", () => {
       expect(nonthrowable).not.toThrow();
     });
 
-    it("should error on values beyond min or max range", () => {
+    it("should throw invalid length error", () => {
       const throwable = () => {
         xyz.number().min(1).max(3).parse(0);
       };
 
-      expect(throwable).toThrow();
+      expect(throwable).toThrow(/Invalid Length:/);
 
       const throwable2 = () => {
         xyz.number().min(1).max(3).parse(4);
       };
 
-      expect(throwable2).toThrow();
+      expect(throwable2).toThrow(/Invalid Length:/);
     });
   });
 });
