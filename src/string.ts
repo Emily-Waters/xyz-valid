@@ -1,12 +1,10 @@
-import XYZErrors from "./errors";
-import { Primitives, XYZType } from "./type";
+import { XYZType } from "./type";
 
 function create() {
   class XYZString extends XYZType<any, string> {
-    primitive: Primitives = "string";
-
     constructor() {
       super();
+      this.primitive = "string";
     }
   }
 

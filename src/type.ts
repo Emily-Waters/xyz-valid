@@ -37,7 +37,10 @@ export class XYZType<Input = any, Output = any> {
 
   _parse(value: Input) {
     this.typeCheck(value);
-    this.checks.forEach((check) => check(value));
+
+    if (!this.errors.length) {
+      this.checks.forEach((check) => check(value));
+    }
 
     return this;
   }

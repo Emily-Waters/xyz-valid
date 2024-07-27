@@ -10,7 +10,7 @@ function create() {
 
     min(n: number) {
       this.checks.push((value) => {
-        if (typeof value === this.primitive && value < n) {
+        if (value < n) {
           this.errors.push(XYZErrors.invalidLength(n, value, "min"));
         }
       });
@@ -20,7 +20,7 @@ function create() {
 
     max(n: number) {
       this.checks.push((value) => {
-        if (typeof value === this.primitive && value > n) {
+        if (value > n) {
           this.errors.push(XYZErrors.invalidLength(n, value, "max"));
         }
       });
