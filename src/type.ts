@@ -3,6 +3,7 @@ import XYZString from "./string";
 import XYZOptional from "./optional";
 import XYZErrors from "./errors";
 import XYZNumber from "./number";
+import XYZLiteral from "./literal";
 
 export type Primitives = "string" | "object" | "undefined" | "number";
 export class XYZType<Input = any, Output = any> {
@@ -29,6 +30,10 @@ export class XYZType<Input = any, Output = any> {
 
   number() {
     return XYZNumber.create();
+  }
+
+  literal<T extends string>(literal: T) {
+    return XYZLiteral.create(literal);
   }
 
   optional() {

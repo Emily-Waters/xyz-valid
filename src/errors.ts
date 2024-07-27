@@ -8,7 +8,7 @@ export default class XYZErrors {
   }
 
   static invalidLiteral<T>(expected: T, received: any) {
-    return `Invalid Literal : Expected "${expected}", received "${received}"`;
+    return `Invalid Literal: Expected "${expected}", received "${received}"`;
   }
 
   static invalidStrict<E, R>(expected: E, received: R) {
