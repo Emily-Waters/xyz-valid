@@ -39,7 +39,7 @@ export class XYZType<Input = any, Output = any> {
   }
 
   optional() {
-    return XYZOptional.create();
+    return XYZOptional.create<Output>();
   }
 
   transform<T extends (...args: any) => any>(transform: T) {
