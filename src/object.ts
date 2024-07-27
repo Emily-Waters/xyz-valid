@@ -1,7 +1,18 @@
 import { XYZType } from "./type";
 
-function create<Shape extends { [x: string]: XYZType }>(shape: Shape) {
-  class XYZObject extends XYZType<any, { [K in keyof Shape]: ReturnType<Shape[K]["parse"]> }> {
+type UndefinedKeys<T> = keyof { [K in keyof T]: T[K] extends undefined ? never : T[K] };
+type CombinedProperties<T> = Partial<Pick<T, UndefinedKeys<T>>> & Omit<T, UndefinedKeys<T>>;
+type OptionalUndefined<T> = {
+  [K in keyof CombinedProperties<T>]: NonNullable<T[K]>;
+};
+
+function create<Input extends { [K in keyof Shape]: unknown }, Output, Shape extends { [x: string]: XYZType }>(
+  shape: Shape
+) {
+  class XYZObject extends XYZType<
+    OptionalUndefined<{ [K in keyof Shape]: ReturnType<Shape[K]["parse"]> }>,
+    OptionalUndefined<{ [K in keyof Shape]: ReturnType<Shape[K]["parse"]> }>
+  > {
     constructor(public shape: Shape) {
       super();
       this.primitive = "object";

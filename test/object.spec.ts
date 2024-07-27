@@ -2,15 +2,15 @@ import xyz from "../src";
 
 describe("Object", () => {
   it("should parse", () => {
-    const o = { id: "string" };
-    const r = xyz.object({ id: xyz.string() }).parse(o);
+    const o = { string: "string", number: 1, literal: "literal" } as const;
+    const r = xyz.object({ string: xyz.string(), number: xyz.number(), literal: xyz.literal("literal") }).parse(o);
 
     expect(r).toMatchObject(o);
   });
 
   it("should throw type error", () => {
     const throwable = () => {
-      const o = { id: 1 };
+      const o = { id: 1 } as any;
       const r = xyz.object({ id: xyz.string() }).parse(o);
     };
 
@@ -42,7 +42,7 @@ describe("Object", () => {
 
   it("should allow nested optional properties", () => {
     const nonthrowable = () => {
-      xyz.object({ id: xyz.string().optional() }).parse({});
+      const r = xyz.object({ id: xyz.string().optional() }).parse({});
     };
 
     expect(nonthrowable).not.toThrow();

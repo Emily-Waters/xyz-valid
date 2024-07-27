@@ -27,7 +27,7 @@ export class XYZType<Input = any, Output = any> {
   }
 
   object<Shape extends { [x: string]: XYZType }>(shape: Shape) {
-    return XYZObject.create(shape);
+    return XYZObject.create<{ [K in keyof Shape]: unknown }, Output, Shape>(shape);
   }
 
   number() {
