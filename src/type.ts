@@ -4,10 +4,12 @@ import XYZOptional from "./optional";
 import XYZErrors from "./errors";
 import XYZNumber from "./number";
 import XYZLiteral from "./literal";
+import XYZTransform from "./transform";
 
 export type Primitives = "string" | "object" | "undefined" | "number";
 export class XYZType<Input = any, Output = any> {
   primitive: Primitives;
+  transformFn?: <T>(value: Input) => T;
   isOptional: boolean = false;
   checks: ((value: Input) => void)[] = [];
   errors: string[] = [];
@@ -40,6 +42,10 @@ export class XYZType<Input = any, Output = any> {
     return XYZOptional.create();
   }
 
+  transform<T extends (...args: any) => any>(transform: T) {
+    return XYZTransform.create(this.primitive, transform);
+  }
+
   _parse(value: Input) {
     this.typeCheck(value);
 
@@ -55,6 +61,10 @@ export class XYZType<Input = any, Output = any> {
 
     if (this.errors.length) {
       throw new Error(this.errors.join("\n"));
+    }
+
+    if (this.transformFn) {
+      return this.transformFn<Output>(value) as unknown as Output;
     }
 
     return value as unknown as Output;
