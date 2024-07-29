@@ -1,8 +1,11 @@
 import { XYZObjectShape, XYZType } from "./type";
 
-type UndefinedKeys<T> = keyof { [K in keyof T]: T[K] extends undefined ? never : T[K] };
-type CombinedProperties<T> = Partial<Pick<T, UndefinedKeys<T>>> & Omit<T, UndefinedKeys<T>>;
-type OptionalUndefined<T> = { [K in keyof CombinedProperties<T>]: NonNullable<T[K]> };
+type ExtractOptional<T> = {
+  [K in keyof T as Extract<T[K], undefined> extends never ? never : K]+?: NonNullable<T[K]>;
+};
+
+type ExtractRequired<T> = Omit<{ [K in keyof T]: T[K] }, keyof ExtractOptional<T>>;
+type OptionalUndefined<T> = ExtractRequired<T> & ExtractOptional<T>;
 
 function create<Shape extends XYZObjectShape>(shape: Shape) {
   class XYZObject extends XYZType<
