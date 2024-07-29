@@ -1,7 +1,7 @@
 import { XYZType } from "./type";
 
 type ExtractOptional<T> = {
-  [K in keyof T as Extract<T[K], undefined> extends never ? never : K]+?: NonNullable<T[K]>;
+  [K in keyof T as Extract<T[K], undefined> extends never ? never : K]+?: T[K];
 };
 
 type ExtractRequired<T> = Omit<{ [K in keyof T]: T[K] }, keyof ExtractOptional<T>>;
