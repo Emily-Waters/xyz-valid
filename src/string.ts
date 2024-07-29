@@ -2,7 +2,7 @@ import XYZErrors from "./errors";
 import { XYZType } from "./type";
 
 function create() {
-  class XYZString extends XYZType<any, string> {
+  class XYZString extends XYZType<string, string> {
     constructor() {
       super();
       this.primitive = "string";

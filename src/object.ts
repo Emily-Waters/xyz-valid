@@ -18,10 +18,10 @@ function create<Shape extends XYZObjectShape>(shape: Shape) {
 
       this.checks.push((value) => {
         for (const key in shape) {
-          const errors = this.shape[key].safeParse(value[key]).errors;
+          const result = this.shape[key].safeParse(value[key as any]);
 
-          if (errors) {
-            this.errors.push(...errors);
+          if (result.errors) {
+            this.errors.push(...result.errors);
           }
         }
       });

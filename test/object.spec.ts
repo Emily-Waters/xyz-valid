@@ -10,15 +10,15 @@ describe("Object", () => {
 
   it("should throw type error", () => {
     const throwable = () => {
-      const o = { id: 1 } as any;
+      const o = { id: 1 };
       const r = xyz.object({ id: xyz.string() }).parse(o);
     };
 
     expect(throwable).toThrow(/Invalid Type:/);
 
     const throwable2 = () => {
-      const o = {} as any;
-      const r = xyz.object({ id: xyz.string().transform((s) => Number(s)) }).parse(o);
+      const o = {};
+      const r = xyz.object({ id: xyz.string() }).parse(o);
     };
 
     expect(throwable2).toThrow(/Invalid Type:/);
@@ -42,7 +42,7 @@ describe("Object", () => {
 
   it("should allow nested optional properties", () => {
     const nonthrowable = () => {
-      const r = xyz.object({ id: xyz.string().optional() }).parse({});
+      const r = xyz.object({ id: xyz.string().optional() }).parse({} as any);
     };
 
     expect(nonthrowable).not.toThrow();

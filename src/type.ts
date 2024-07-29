@@ -13,7 +13,7 @@ export type XYZObjectShape<T = unknown> = T extends unknown
 export type Primitives = "string" | "object" | "undefined" | "number";
 export class XYZType<Input = any, Output = any> {
   primitive: Primitives;
-  transformFn?: (value: Input) => Output;
+  transformFn: (value: Input) => Output = (val) => val as unknown as Output;
   isOptional: boolean = false;
   checks: ((value: Input) => void)[] = [];
   errors: string[] = [];
@@ -30,7 +30,9 @@ export class XYZType<Input = any, Output = any> {
     return XYZString.create();
   }
 
-  object<Shape extends { [x: string]: unknown }>(shape: { [K in keyof Shape]: XYZType<any, Shape[K]> }) {
+  object<Shape extends { [x: string]: unknown }>(shape: {
+    [K in keyof Shape]: XYZType<any, Shape[K]> extends infer X ? X : never;
+  }) {
     return XYZObject.create(shape);
   }
 
@@ -64,17 +66,13 @@ export class XYZType<Input = any, Output = any> {
     }
   }
 
-  parse(value: Input) {
+  parse(value) {
     this.safeParse(value);
 
     if (this.errors.length) {
       throw new Error(this.errors.join("\n"));
-    }
-
-    if (this.transformFn) {
+    } else {
       return this.transformFn(value);
     }
-
-    return value as unknown as Output;
   }
 }

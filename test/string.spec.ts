@@ -10,7 +10,8 @@ describe("String", () => {
 
   it("should throw type error", () => {
     const throwable = () => {
-      const x = xyz.string().parse(1);
+      const n = 1 as any;
+      const x = xyz.string().parse(n);
     };
 
     expect(throwable).toThrow(/Invalid Type:/);
