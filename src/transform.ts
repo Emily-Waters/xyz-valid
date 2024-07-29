@@ -1,7 +1,10 @@
 import { Primitives, XYZType } from "./type";
 
-function create<Input, Transform extends (value: Input) => any>(primitive: Primitives, transform: Transform) {
-  class XYZTransform extends XYZType<Input, ReturnType<typeof transform>> {
+function create<Input, Output, Transform extends (value: Input) => Output>(
+  primitive: Primitives,
+  transform: Transform
+) {
+  class XYZTransform extends XYZType<Input, Output> {
     constructor() {
       super();
       this.primitive = primitive;

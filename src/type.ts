@@ -13,7 +13,7 @@ export type XYZObjectShape<T = unknown> = T extends unknown
 export type Primitives = "string" | "object" | "undefined" | "number";
 export class XYZType<Input = any, Output = any> {
   primitive: Primitives;
-  transformFn?: <T>(value: Input) => T;
+  transformFn?: (value: Input) => Output;
   isOptional: boolean = false;
   checks: ((value: Input) => void)[] = [];
   errors: string[] = [];
@@ -38,7 +38,7 @@ export class XYZType<Input = any, Output = any> {
     return XYZNumber.create();
   }
 
-  literal<T extends string>(literal: T) {
+  literal<Literal extends string>(literal: Literal) {
     return XYZLiteral.create(literal);
   }
 
@@ -46,8 +46,8 @@ export class XYZType<Input = any, Output = any> {
     return XYZOptional.create<Output>();
   }
 
-  transform<T extends (...args: any) => any>(transform: T) {
-    return XYZTransform.create(this.primitive, transform);
+  transform<Transform extends (value: Output) => any>(transform: Transform) {
+    return XYZTransform.create<Output, ReturnType<Transform>, Transform>(this.primitive, transform);
   }
 
   safeParse(value) {
@@ -72,7 +72,7 @@ export class XYZType<Input = any, Output = any> {
     }
 
     if (this.transformFn) {
-      return this.transformFn<Output>(value) as unknown as Output;
+      return this.transformFn(value);
     }
 
     return value as unknown as Output;

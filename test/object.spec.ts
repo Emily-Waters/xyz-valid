@@ -18,7 +18,7 @@ describe("Object", () => {
 
     const throwable2 = () => {
       const o = {} as any;
-      const r = xyz.object({ id: xyz.string() }).parse(o);
+      const r = xyz.object({ id: xyz.string().transform((s) => Number(s)) }).parse(o);
     };
 
     expect(throwable2).toThrow(/Invalid Type:/);
