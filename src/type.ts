@@ -6,33 +6,31 @@ import XYZNumber from "./number";
 import XYZLiteral from "./literal";
 import XYZTransform from "./transform";
 
-export type XYZObjectShape<T = unknown> = T extends unknown
-  ? { [x: string]: XYZType }
-  : { [K in keyof T]: XYZType<any, T[K]> };
-
 export type Primitives = "string" | "object" | "undefined" | "number";
 export class XYZType<Input = any, Output = any> {
-  primitive: Primitives;
-  transformFn: (value: Input) => Output = (val) => val as unknown as Output;
-  isOptional: boolean = false;
-  checks: ((value: Input) => void)[] = [];
-  errors: string[] = [];
+  protected primitive: Primitives;
+  protected _transform: (value: Input) => Output = (val) => val as unknown as Output;
+  protected isOptional: boolean = false;
+  protected checks: ((value: Input) => void)[] = [];
+  protected errors: string[] = [];
 
-  protected typeCheck = (value: Input) => {
+  protected typeCheck = (value: unknown): value is Input => {
     if (this.isOptional && value === undefined) {
       this.checks = [];
+      return true;
     } else if (this.primitive !== typeof value) {
       this.errors.push(XYZErrors.invalidType(this.primitive, typeof value));
+      return false;
     }
+
+    return true;
   };
 
   string() {
     return XYZString.create();
   }
 
-  object<Shape extends { [x: string]: unknown }>(shape: {
-    [K in keyof Shape]: XYZType<any, Shape[K]> extends infer X ? X : never;
-  }) {
+  object<Shape extends { [x: string]: XYZType }>(shape: Shape) {
     return XYZObject.create(shape);
   }
 
@@ -52,27 +50,29 @@ export class XYZType<Input = any, Output = any> {
     return XYZTransform.create<Output, ReturnType<Transform>, Transform>(this.primitive, transform);
   }
 
-  safeParse(value) {
-    this.typeCheck(value);
+  safeParse(value: unknown) {
+    if (this.typeCheck(value)) {
+      if (!this.errors.length) {
+        this.checks.forEach((check) => check(value));
+      }
 
-    if (!this.errors.length) {
-      this.checks.forEach((check) => check(value));
+      if (!this.errors.length) {
+        return { errors: null, value };
+      }
     }
 
-    if (this.errors.length) {
-      return { errors: this.errors, value };
-    } else {
-      return { value };
-    }
+    return { errors: this.errors, value };
   }
 
-  parse(value) {
-    this.safeParse(value);
+  parse(value: unknown) {
+    const { errors, value: val } = this.safeParse(value);
 
-    if (this.errors.length) {
+    if (errors) {
       throw new Error(this.errors.join("\n"));
-    } else {
-      return this.transformFn(value);
+    } else if (this.typeCheck(val)) {
+      return this._transform(val);
     }
+
+    return val;
   }
 }

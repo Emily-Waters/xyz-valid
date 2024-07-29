@@ -1,4 +1,4 @@
-import { XYZObjectShape, XYZType } from "./type";
+import { XYZType } from "./type";
 
 type ExtractOptional<T> = {
   [K in keyof T as Extract<T[K], undefined> extends never ? never : K]+?: NonNullable<T[K]>;
@@ -7,7 +7,7 @@ type ExtractOptional<T> = {
 type ExtractRequired<T> = Omit<{ [K in keyof T]: T[K] }, keyof ExtractOptional<T>>;
 type OptionalUndefined<T> = ExtractRequired<T> & ExtractOptional<T>;
 
-function create<Shape extends XYZObjectShape>(shape: Shape) {
+function create<Shape extends { [x: string]: XYZType }>(shape: Shape) {
   class XYZObject extends XYZType<
     OptionalUndefined<{ [K in keyof Shape]: ReturnType<Shape[K]["parse"]> }>,
     OptionalUndefined<{ [K in keyof Shape]: ReturnType<Shape[K]["parse"]> }>

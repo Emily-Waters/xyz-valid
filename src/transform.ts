@@ -8,7 +8,7 @@ function create<Input, Output, Transform extends (value: Input) => Output>(
     constructor() {
       super();
       this.primitive = primitive;
-      this.transformFn = transform;
+      this._transform = transform;
     }
   }
 

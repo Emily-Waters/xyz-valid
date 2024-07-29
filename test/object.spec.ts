@@ -42,7 +42,7 @@ describe("Object", () => {
 
   it("should allow nested optional properties", () => {
     const nonthrowable = () => {
-      const r = xyz.object({ id: xyz.string().optional() }).parse({} as any);
+      const r = xyz.object({ id: xyz.string().optional() }).parse({});
     };
 
     expect(nonthrowable).not.toThrow();
