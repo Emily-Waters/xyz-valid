@@ -6,6 +6,10 @@ import XYZNumber from "./number";
 import XYZLiteral from "./literal";
 import XYZTransform from "./transform";
 
+export type XYZObjectShape<T = unknown> = T extends unknown
+  ? { [x: string]: XYZType }
+  : { [K in keyof T]: XYZType<any, T[K]> };
+
 export type Primitives = "string" | "object" | "undefined" | "number";
 export class XYZType<Input = any, Output = any> {
   primitive: Primitives;
@@ -26,8 +30,8 @@ export class XYZType<Input = any, Output = any> {
     return XYZString.create();
   }
 
-  object<Shape extends { [x: string]: XYZType }>(shape: Shape) {
-    return XYZObject.create<{ [K in keyof Shape]: unknown }, Output, Shape>(shape);
+  object<Shape extends { [x: string]: unknown }>(shape: { [K in keyof Shape]: XYZType<any, Shape[K]> }) {
+    return XYZObject.create(shape);
   }
 
   number() {
