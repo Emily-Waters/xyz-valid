@@ -1,8 +1,8 @@
 import XYZErrors from "./errors";
 import { XYZType } from "./type";
 
-export class XYZLiteral<T> extends XYZType<T, T> {
-  constructor(literal: T) {
+export class XYZLiteral<TLiteral extends string> extends XYZType<TLiteral, TLiteral> {
+  constructor(literal: TLiteral) {
     super();
     this._primitive = "string";
 

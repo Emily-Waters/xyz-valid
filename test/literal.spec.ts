@@ -2,10 +2,10 @@ import xyz from "../src";
 
 describe("Literal", () => {
   it("should parse", () => {
-    const literal = "literal" as const;
-    const r = xyz.literal(literal).parse(literal);
+    const l = "literal";
+    const r = xyz.literal(l).parse(l);
 
-    expect(r).toBe(literal);
+    expect(r).toBe(l);
   });
 
   it("should throw a type error", () => {
@@ -17,11 +17,11 @@ describe("Literal", () => {
   });
 
   it("should throw an invalid literal error", () => {
-    const literal = "literal" as const;
-    const actual = "actual";
+    const l = "literal";
+    const a = "actual";
 
     const throwable = () => {
-      const r = xyz.literal(literal).parse(actual);
+      const r = xyz.literal(l).parse(a);
     };
 
     expect(throwable).toThrow(/Invalid Literal:/);
