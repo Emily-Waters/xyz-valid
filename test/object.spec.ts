@@ -34,7 +34,8 @@ describe("Object", () => {
 
   it("should throw type error on nested property", () => {
     const throwable = () => {
-      xyz.object({ id: xyz.string() }).optional().parse({ id: 1 });
+      const o = { id: 1 };
+      const r = xyz.object({ id: xyz.string() }).optional().parse(o);
     };
 
     expect(throwable).toThrow(/Invalid Type:/);

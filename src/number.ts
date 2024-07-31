@@ -1,35 +1,29 @@
 import XYZErrors from "./errors";
 import { XYZType } from "./type";
 
-function create() {
-  class XYZNumber extends XYZType<any, number> {
-    constructor() {
-      super();
-      this.primitive = "number";
-    }
-
-    min(n: number) {
-      this.checks.push((value) => {
-        if (value < n) {
-          this.errors.push(XYZErrors.invalidLength(n, value, "min"));
-        }
-      });
-
-      return this;
-    }
-
-    max(n: number) {
-      this.checks.push((value) => {
-        if (value > n) {
-          this.errors.push(XYZErrors.invalidLength(n, value, "max"));
-        }
-      });
-
-      return this;
-    }
+export class XYZNumber extends XYZType<number, number> {
+  constructor() {
+    super();
+    this._primitive = "number";
   }
 
-  return new XYZNumber();
-}
+  min(n: number) {
+    this._checks.push((input) => {
+      if (input < n) {
+        this._errors.push(XYZErrors.invalidLength(n, input, "min"));
+      }
+    });
 
-export default { create };
+    return this;
+  }
+
+  max(n: number) {
+    this._checks.push((input) => {
+      if (input > n) {
+        this._errors.push(XYZErrors.invalidLength(n, input, "max"));
+      }
+    });
+
+    return this;
+  }
+}

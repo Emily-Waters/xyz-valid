@@ -1,78 +1,83 @@
-import XYZObject from "./object";
-import XYZString from "./string";
-import XYZOptional from "./optional";
 import XYZErrors from "./errors";
-import XYZNumber from "./number";
-import XYZLiteral from "./literal";
-import XYZTransform from "./transform";
 
 export type Primitives = "string" | "object" | "undefined" | "number";
-export class XYZType<Input = any, Output = any> {
-  protected primitive: Primitives;
-  protected _transform: (value: Input) => Output = (val) => val as unknown as Output;
-  protected isOptional: boolean = false;
-  protected checks: ((value: Input) => void)[] = [];
-  protected errors: string[] = [];
 
-  protected typeCheck = (value: unknown): value is Input => {
-    if (this.isOptional && value === undefined) {
-      this.checks = [];
-      return true;
-    } else if (this.primitive !== typeof value) {
-      this.errors.push(XYZErrors.invalidType(this.primitive, typeof value));
+export abstract class XYZType<
+  Input = any,
+  Output = Input,
+  Def extends { [x: string]: XYZType } = { [x: string]: XYZType },
+> {
+  _input: Input;
+  _def: Def;
+  _output: Output;
+  _primitive: Primitives;
+
+  _errors: string[] = [];
+  _checks: ((input: Input) => void)[] = [];
+  _optional: boolean = false;
+
+  optional() {
+    return new XYZOptional();
+  }
+
+  transform<Transform extends (input: Input) => any>(fn: Transform) {
+    return new XYZTransform(fn, this._primitive);
+  }
+
+  protected _transform(input): Output {
+    return input;
+  }
+
+  protected _typeCheck(input: unknown): input is Input {
+    if (this._optional && input === undefined) {
+      return false;
+    } else if (typeof input !== this._primitive) {
+      this._errors.push(XYZErrors.invalidType(this._primitive, typeof input));
       return false;
     }
 
     return true;
-  };
-
-  string() {
-    return XYZString.create();
   }
 
-  object<Shape extends { [x: string]: XYZType }>(shape: Shape) {
-    return XYZObject.create(shape);
-  }
+  safeParse(input: unknown) {
+    //@ts-ignore
+    this._input = input;
+    //@ts-ignore
+    this._output = input;
 
-  number() {
-    return XYZNumber.create();
-  }
-
-  literal<Literal extends string>(literal: Literal) {
-    return XYZLiteral.create(literal);
-  }
-
-  optional() {
-    return XYZOptional.create<Output>();
-  }
-
-  transform<Transform extends (value: Output) => any>(transform: Transform) {
-    return XYZTransform.create<Output, ReturnType<Transform>, Transform>(this.primitive, transform);
-  }
-
-  safeParse(value: unknown) {
-    if (this.typeCheck(value)) {
-      if (!this.errors.length) {
-        this.checks.forEach((check) => check(value));
-      }
-
-      if (!this.errors.length) {
-        return { errors: null, value };
-      }
+    if (this._typeCheck(input)) {
+      this._checks.forEach((check) => check.call(this, input));
     }
 
-    return { errors: this.errors, value };
+    if (!this._errors.length) {
+      return { errors: null, value: this._transform(input) };
+    } else {
+      return { errors: this._errors, value: input };
+    }
   }
 
-  parse(value: unknown) {
-    const { errors, value: val } = this.safeParse(value);
+  parse(input: unknown) {
+    const { errors, value } = this.safeParse(input);
 
     if (errors) {
-      throw new Error(this.errors.join("\n"));
-    } else if (this.typeCheck(val)) {
-      return this._transform(val);
+      throw new Error(errors.join("\n"));
+    } else {
+      return value;
     }
+  }
+}
+class XYZOptional<T extends XYZType> extends XYZType<T["_input"] | undefined, T["_output"] | undefined> {
+  _optional: boolean = true;
 
-    return val;
+  constructor() {
+    super();
+  }
+}
+
+class XYZTransform<T extends XYZType, Output> extends XYZType<T["_input"], Output, T["_def"]> {
+  constructor(transform: (input: T["_input"]) => Output, primitive: T["_primitive"]) {
+    super();
+    this._transform = transform;
+    this._primitive = primitive;
   }
 }
