@@ -5,7 +5,7 @@ export type Primitives = "string" | "object" | "undefined" | "number";
 export abstract class XYZType<
   Input = any,
   Output = Input,
-  Def extends { [x: string]: XYZType } = { [x: string]: XYZType },
+  Def extends { [K in keyof Input]: Input[K] } = { [K in keyof Input]: Input[K] },
 > {
   _input: Input;
   _def: Def;
@@ -17,11 +17,11 @@ export abstract class XYZType<
   _optional: boolean = false;
 
   optional() {
-    return new XYZOptional();
+    return new XYZOptional<this>();
   }
 
   transform<Transform extends (input: Input) => any>(fn: Transform) {
-    return new XYZTransform(fn, this._primitive);
+    return new XYZTransform<this, ReturnType<typeof fn>>(fn, this._primitive);
   }
 
   protected _transform(input): Output {
@@ -66,7 +66,7 @@ export abstract class XYZType<
     }
   }
 }
-class XYZOptional<T extends XYZType> extends XYZType<T["_input"] | undefined, T["_output"] | undefined> {
+class XYZOptional<T extends XYZType> extends XYZType<T["_input"] | undefined, T["_output"] | undefined, T["_def"]> {
   _optional: boolean = true;
 
   constructor() {

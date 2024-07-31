@@ -1,18 +1,11 @@
 import { XYZType } from "./type";
 
-type ExtractOptional<T> = {
-  [K in keyof T as Extract<T[K], undefined> extends never ? never : K]+?: T[K];
-};
-
-type ExtractRequired<T> = Omit<{ [K in keyof T]: T[K] }, keyof ExtractOptional<T>>;
-type OptionalUndefined<T> = ExtractRequired<T> & ExtractOptional<T>;
-
 export class XYZObject<Shape extends XYZType["_def"]> extends XYZType<
-  OptionalUndefined<{ [K in keyof Shape]: ReturnType<Shape[K]["parse"]> }>,
-  OptionalUndefined<{ [K in keyof Shape]: ReturnType<Shape[K]["parse"]> }>,
-  XYZType["_def"]
+  { [K in keyof Shape]: ReturnType<Shape[K]["parse"]> },
+  { [K in keyof Shape]: ReturnType<Shape[K]["parse"]> },
+  Shape
 > {
-  constructor(shape: XYZType["_def"]) {
+  constructor(shape: Shape) {
     super();
     this._primitive = "object";
     this._def = shape;
