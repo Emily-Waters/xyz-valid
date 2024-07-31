@@ -1,6 +1,6 @@
 import XYZErrors from "./errors";
 
-export type Primitives = "string" | "object" | "undefined" | "number";
+export type Primitives = "string" | "object" | "undefined" | "number" | "regex";
 
 export abstract class XYZType<
   TInput = any,

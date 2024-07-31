@@ -14,4 +14,8 @@ export default class XYZErrors {
   static invalidStrict<E, R>(expected: E, received: R) {
     return `Invalid Strict Object: Expected ${expected}, received ${received}`;
   }
+
+  static invalidRegex<T>(expected: T, received?: string) {
+    return `Invalid Regex: Expected ${expected}, received ${received}`;
+  }
 }

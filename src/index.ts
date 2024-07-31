@@ -3,6 +3,7 @@ import { XYZNumber } from "./number";
 import { XYZLiteral } from "./literal";
 import { XYZObject } from "./object";
 import { XYZType } from "./type";
+import { XYZRegex } from "./regex";
 
 const xyz = {
   string() {
@@ -10,6 +11,9 @@ const xyz = {
   },
   literal<T extends string>(literal: T) {
     return new XYZLiteral(literal);
+  },
+  regex(regex: RegExp) {
+    return new XYZRegex(regex);
   },
   number() {
     return new XYZNumber();
