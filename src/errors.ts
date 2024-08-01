@@ -22,4 +22,8 @@ export default class XYZErrors {
   static invalidKey<T>(expected: T, key: string) {
     return `Invalid Key: "${key}" is not in ${expected}`;
   }
+
+  static invalidEnumMember<T extends Array<string>>(expected: T, received: string) {
+    return `Invalid Enum Member: Expected "${expected.join(`" | "`)}", received "${received}"`;
+  }
 }
