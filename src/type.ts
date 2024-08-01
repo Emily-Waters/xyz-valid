@@ -8,13 +8,13 @@ export abstract class XYZType<
   TOutput = TInput,
   TDef extends { [K in keyof TInput]: TInput[K] } = { [K in keyof TInput]: TInput[K] },
 > {
-  _input: TInput;
+  readonly _input: TInput;
+  readonly _output: TOutput;
   _def: TDef;
-  _output: TOutput;
   _primitive: Primitives;
 
-  _errors: string[] = [];
-  _checks: ((input: TInput) => void)[] = [];
+  readonly _errors: string[] = [];
+  readonly _checks: ((input: TInput) => void)[] = [];
   _optional: boolean = false;
 
   optional() {
@@ -23,11 +23,12 @@ export abstract class XYZType<
   }
 
   transform<Transform extends (input: TInput) => any>(fn: Transform) {
-    return new XYZTransform<this, ReturnType<typeof fn>>(fn, this._primitive);
+    this._transform = fn;
+    return new XYZTransform<this, ReturnType<typeof fn>>(this);
   }
 
-  protected _transform(input): TOutput {
-    return input;
+  protected _transform(input: unknown): TOutput {
+    return input as TOutput;
   }
 
   protected _typeCheck(input: unknown): input is TInput {
@@ -42,13 +43,8 @@ export abstract class XYZType<
   }
 
   safeParse(input: unknown) {
-    //@ts-ignore
-    this._input = input;
-    //@ts-ignore
-    this._output = input;
-
     if (this._typeCheck(input)) {
-      this._checks.forEach((check) => check.call(this, input));
+      this._checks.forEach((check) => check(input));
     }
 
     if (!this._errors.length) {
@@ -76,16 +72,18 @@ class XYZOptional<TType extends XYZType> extends XYZType<
   constructor(parent: TType) {
     super();
 
-    for (const key in parent) {
-      this[key as any] = parent[key];
+    for (const key in { ...this, ...parent }) {
+      this[key] = parent[key];
     }
   }
 }
 
 class XYZTransform<TType extends XYZType, TOutput> extends XYZType<TType["_input"], TOutput, TType["_def"]> {
-  constructor(transform: (input: TType["_input"]) => TOutput, primitive: TType["_primitive"]) {
+  constructor(parent: TType) {
     super();
-    this._transform = transform;
-    this._primitive = primitive;
+
+    for (const key in { ...this, ...parent }) {
+      this[key] = parent[key];
+    }
   }
 }
