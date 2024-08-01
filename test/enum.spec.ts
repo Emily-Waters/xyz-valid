@@ -3,7 +3,7 @@ import xyz from "../src";
 describe("Array", () => {
   it("should parse", () => {
     const s = "a";
-    const r = xyz.enum([s, "b", "c"]).parse("a");
+    const r = xyz.enum([s, "b", "c"]).parse(s);
 
     expect(r).toBe(s);
   });
