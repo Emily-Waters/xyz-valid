@@ -4,6 +4,7 @@ import { XYZLiteral } from "./literal";
 import { XYZObject } from "./object";
 import { XYZType } from "./type";
 import { XYZRegex } from "./regex";
+import { XYZArray } from "./array";
 
 const xyz = {
   string() {
@@ -20,6 +21,9 @@ const xyz = {
   },
   object<Shape extends XYZType["_def"]>(shape: Shape) {
     return new XYZObject(shape);
+  },
+  array<TSchema extends XYZType>(schema: TSchema) {
+    return new XYZArray(schema);
   },
 };
 

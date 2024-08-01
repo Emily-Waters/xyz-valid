@@ -17,7 +17,7 @@ export abstract class XYZType<
   _optional: boolean = false;
 
   optional() {
-    return new XYZOptional<this>();
+    return new XYZOptional<this>(this._primitive);
   }
 
   transform<Transform extends (input: TInput) => any>(fn: Transform) {
@@ -73,8 +73,9 @@ class XYZOptional<TType extends XYZType> extends XYZType<
 > {
   _optional: boolean = true;
 
-  constructor() {
+  constructor(primitive: TType["_primitive"]) {
     super();
+    this._primitive = primitive;
   }
 }
 

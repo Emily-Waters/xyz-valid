@@ -1,7 +1,7 @@
 import XYZErrors from "./errors";
 import { XYZType } from "./type";
 
-export class XYZString<TInput extends string, TOutput extends string> extends XYZType<TInput, TOutput> {
+export class XYZString<TInput extends string, TOutput extends string> extends XYZType<TInput, TOutput, any> {
   constructor() {
     super();
     this._primitive = "string";

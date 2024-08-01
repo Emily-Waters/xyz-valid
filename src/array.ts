@@ -2,8 +2,7 @@ import { XYZType } from "./type";
 
 export class XYZArray<Schema extends XYZType> extends XYZType<
   ReturnType<Schema["parse"]>[],
-  ReturnType<Schema["parse"]>[],
-  any
+  ReturnType<Schema["parse"]>[]
 > {
   constructor(schema: Schema) {
     super();
