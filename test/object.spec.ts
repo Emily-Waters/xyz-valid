@@ -35,10 +35,17 @@ describe("Object", () => {
   it("should throw type error on nested property", () => {
     const throwable = () => {
       const o = { id: 1 };
-      const r = xyz.object({ id: xyz.string() }).optional().parse(o);
+      const r = xyz.object({ id: xyz.string() }).parse(o);
     };
 
     expect(throwable).toThrow(/Invalid Type:/);
+
+    const throwable2 = () => {
+      const o = { id: 1 };
+      const r = xyz.object({ id: xyz.string() }).optional().parse(o);
+    };
+
+    expect(throwable2).toThrow(/Invalid Type:/);
   });
 
   it("should allow nested optional properties", () => {
