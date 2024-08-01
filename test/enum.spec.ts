@@ -22,7 +22,6 @@ describe("Array", () => {
       const s = "z";
       const r = xyz.enum(["a", "b", "c"]).parse(s);
     };
-
-    throwable();
+    expect(throwable).toThrow(/Invalid Enum Member:/);
   });
 });

@@ -17,14 +17,22 @@ export class XYZObject<Shape extends XYZType["_def"]> extends XYZType<
       if (this._strict) {
         const inputKeys = Object.keys(input);
         const shapeKeys = Object.keys(shape);
+        const optionalKeys = Object.values(shape).filter((e) => e._optional);
 
-        if (inputKeys.length !== shapeKeys.length) {
+        const inputKeysLength = inputKeys.length;
+        const shapeKeysLength = shapeKeys.length;
+        const optionalKeysLength = optionalKeys.length;
+        const isInputKeysLengthGreater = inputKeysLength > shapeKeysLength;
+        const isInputKeysLengthLess = inputKeysLength < shapeKeysLength - optionalKeysLength;
+        const areKeysInvalidLength = isInputKeysLengthGreater || isInputKeysLengthLess;
+
+        if (areKeysInvalidLength) {
           this._errors.push(XYZErrors.invalidStrict(shape, input));
-        }
-
-        for (const key of inputKeys) {
-          if (!(key in shape)) {
-            this._errors.push(XYZErrors.invalidKey(shape, key));
+        } else {
+          for (const key of inputKeys) {
+            if (!(key in shape)) {
+              this._errors.push(XYZErrors.invalidKey(shape, key));
+            }
           }
         }
       }

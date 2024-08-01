@@ -65,5 +65,21 @@ describe("Object", () => {
     };
 
     expect(throwable).toThrow(/Invalid Strict Object:/);
+
+    const throwable2 = () => {
+      const o = { a: "string", b: "string" };
+      const r = xyz.object({ a: xyz.string(), b: xyz.string(), c: xyz.string() }).strict().parse(o);
+    };
+
+    expect(throwable2).toThrow(/Invalid Strict Object:/);
+  });
+
+  it("should not throw invalid strict error on optional keys", () => {
+    const throwable = () => {
+      const o = { a: "string", b: "string" };
+      const r = xyz.object({ a: xyz.string(), b: xyz.string(), c: xyz.string().optional() }).strict().parse(o);
+    };
+
+    expect(throwable).not.toThrow();
   });
 });
