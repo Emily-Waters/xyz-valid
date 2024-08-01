@@ -1,6 +1,7 @@
 import XYZErrors from "./errors";
 
 export type Primitives = "string" | "object" | "undefined" | "number" | "regex";
+export type InferType<T extends XYZType> = ReturnType<T["parse"]>;
 
 export abstract class XYZType<
   TInput = any,

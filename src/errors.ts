@@ -18,4 +18,8 @@ export default class XYZErrors {
   static invalidRegex<T>(expected: T, received?: string) {
     return `Invalid Regex: Expected ${expected}, received ${received}`;
   }
+
+  static invalidKey<T>(expected: T, key: string) {
+    return `Invalid Key: "${key}" is not in ${expected}`;
+  }
 }

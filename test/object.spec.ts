@@ -2,7 +2,7 @@ import xyz from "../src";
 
 describe("Object", () => {
   it("should parse", () => {
-    const o = { string: "string", number: 1, literal: "literal" } as const;
+    const o = { string: "string", number: 1, literal: "literal" };
     const r = xyz.object({ string: xyz.string(), number: xyz.number(), literal: xyz.literal("literal") }).parse(o);
 
     expect(r).toMatchObject(o);
@@ -26,7 +26,8 @@ describe("Object", () => {
 
   it("should allow optional", () => {
     const nonthrowable = () => {
-      const r = xyz.object({ id: xyz.string() }).optional().parse(undefined);
+      const u = undefined;
+      const r = xyz.object({ id: xyz.string() }).optional().parse(u);
     };
 
     expect(nonthrowable).not.toThrow();
@@ -50,9 +51,19 @@ describe("Object", () => {
 
   it("should allow nested optional properties", () => {
     const nonthrowable = () => {
-      const r = xyz.object({ id: xyz.string().optional() }).parse({});
+      const o = {};
+      const r = xyz.object({ id: xyz.string().optional() }).parse(o);
     };
 
     expect(nonthrowable).not.toThrow();
+  });
+
+  it("should throw invalid strict error", () => {
+    const throwable = () => {
+      const o = { a: "string", b: "string" };
+      const r = xyz.object({ a: xyz.string() }).strict().parse(o);
+    };
+
+    expect(throwable).toThrow(/Invalid Strict Object:/);
   });
 });
