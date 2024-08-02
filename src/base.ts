@@ -2,23 +2,31 @@ import XYZErrors from "./errors";
 
 export type Primitives = "string" | "number" | "object";
 
+type ErrorType = string;
+
 export type XYZBaseType<TInput = unknown, TOutput = unknown> = {
   safeParse: (input: unknown) => { errors: string[]; value: unknown } | { errors: null; value: TOutput };
   parse: (input: unknown) => TOutput;
-  optional: () => Omit<XYZBaseType<TInput | undefined, TOutput | undefined>, "optional">;
+  optional: () => Omit<XYZBaseType<TInput | undefined, TOutput | undefined>, "optional" | "nullable">;
+  nullable: () => Omit<XYZBaseType<TInput | null, TOutput | null>, "optional" | "nullable">;
   transform: <TTransform extends (input: TOutput) => any>(
     t: TTransform
-  ) => Omit<XYZBaseType<TInput, ReturnType<TTransform>>, "optional" | "transform">;
+  ) => Omit<XYZBaseType<TInput, ReturnType<TTransform>>, "optional" | "transform" | "nullable">;
 };
-export type BaseTypes = XYZBaseType | ReturnType<XYZBaseType["optional"]> | ReturnType<XYZBaseType["transform"]>;
+export type BaseTypes =
+  | XYZBaseType
+  | ReturnType<XYZBaseType["optional"]>
+  | ReturnType<XYZBaseType["transform"]>
+  | ReturnType<XYZBaseType["nullable"]>;
 
 export type XYZConfig<TInput = any, TOutput = any> = {
   _checks: ((input: TInput) => void)[];
   _input: TInput;
   _output: TOutput;
-  _errors: string[];
+  _errors: ErrorType[];
   _optional: boolean;
   _type: Primitives;
+  _nullable: boolean;
   _transform?: <NewOutput>(input: TOutput) => NewOutput;
 };
 
@@ -28,15 +36,18 @@ export function typeCheck<TConfig extends XYZConfig>(config: TConfig, input: unk
   } else if (config._optional && input === undefined) {
     config._checks = [];
     return true;
+  } else if (config._nullable && input === null) {
+    config._checks = [];
+    return true;
   } else {
     config._errors.push(XYZErrors.invalidType(config._type, typeof input));
     return false;
   }
 }
 
-export function safeParse<TConfig extends XYZConfig>(
+export function safeParse<TConfig extends XYZConfig, TInput>(
   config: TConfig,
-  input: unknown
+  input: TInput
 ): { errors: null; value: TConfig["_output"] } | { errors: string[]; value: TConfig["_input"] } {
   config._input = input;
 
@@ -56,7 +67,7 @@ export function safeParse<TConfig extends XYZConfig>(
   return { errors: config._errors, value: input };
 }
 
-export function parse<TConfig extends XYZConfig>(config: TConfig, input: unknown) {
+export function parse<TConfig extends XYZConfig, TInput>(config: TConfig, input: TInput) {
   const { errors, value } = safeParse(config, input);
 
   if (errors) {
@@ -74,6 +85,7 @@ export function config<T extends Primitives>(type: T): XYZConfig {
     _checks: [],
     _errors: [],
     _optional: false,
+    _nullable: false,
   };
 }
 
@@ -92,6 +104,10 @@ export function common<TConfig extends XYZConfig>(cfg: TConfig): XYZBaseType<TCo
     transform(t) {
       cfg._transform = t;
       return { parse: this.parse, safeParse: this.safeParse };
+    },
+    nullable() {
+      cfg._nullable = true;
+      return { parse: this.parse, safeParse: this.safeParse, transform: this.transform };
     },
   };
 }

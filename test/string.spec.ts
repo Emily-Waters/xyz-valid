@@ -25,6 +25,14 @@ describe("String", () => {
     expect(nonthrowable).not.toThrow();
   });
 
+  it("should allow nullable", () => {
+    const nonthrowable = () => {
+      const r = xyz.string().nullable().parse(null);
+    };
+
+    expect(nonthrowable).not.toThrow();
+  });
+
   it("should throw type error on optional with invalid type", () => {
     const throwable = () => {
       xyz.string().optional().parse(1);
