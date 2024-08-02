@@ -1,15 +1,36 @@
+import { XYZBaseType, config, common } from "./base";
 import XYZErrors from "./errors";
-import { XYZString } from "./string";
-import { XYZType } from "./type";
 
-export class XYZRegex extends XYZString<string, string> {
-  constructor(regex: RegExp) {
-    super();
+type XYZRegex = XYZBaseType & { min: (min: number) => XYZRegex; max: (max: number) => XYZRegex };
 
-    this._checks.push((input) => {
-      if (!regex.test(input)) {
-        this._errors.push(XYZErrors.invalidRegex(regex, input));
-      }
-    });
-  }
+export function regex<T extends RegExp>(def: T): XYZRegex {
+  const cfg = config("string");
+
+  cfg._checks.push((input) => {
+    if (!def.test(input)) {
+      cfg._errors.push(XYZErrors.invalidRegex(def, input));
+    }
+  });
+
+  return {
+    ...common(cfg),
+    min(min: number) {
+      cfg._checks.push((input) => {
+        if (input.length < min) {
+          cfg._errors.push(XYZErrors.invalidLength(min, input.length, "min"));
+        }
+      });
+
+      return this;
+    },
+    max(max: number) {
+      cfg._checks.push((input) => {
+        if (input.length > max) {
+          cfg._errors.push(XYZErrors.invalidLength(max, input.length, "max"));
+        }
+      });
+
+      return this;
+    },
+  };
 }

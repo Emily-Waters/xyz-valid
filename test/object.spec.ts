@@ -58,22 +58,6 @@ describe("Object", () => {
     expect(nonthrowable).not.toThrow();
   });
 
-  it("should throw invalid strict error", () => {
-    const throwable = () => {
-      const o = { a: "string", b: "string" };
-      const r = xyz.object({ a: xyz.string() }).strict().parse(o);
-    };
-
-    expect(throwable).toThrow(/Invalid Strict Object:/);
-
-    const throwable2 = () => {
-      const o = { a: "string", b: "string" };
-      const r = xyz.object({ a: xyz.string(), b: xyz.string(), c: xyz.string() }).strict().parse(o);
-    };
-
-    expect(throwable2).toThrow(/Invalid Strict Object:/);
-  });
-
   it("should not throw invalid strict error on optional keys", () => {
     const throwable = () => {
       const o = { a: "string", b: "string" };
@@ -81,5 +65,23 @@ describe("Object", () => {
     };
 
     expect(throwable).not.toThrow();
+  });
+
+  it("should throw invalid key error when strict", () => {
+    const throwable = () => {
+      const o = { a: "string", b: "string" };
+      const r = xyz.object({ a: xyz.string() }).strict().parse(o);
+    };
+
+    expect(throwable).toThrow(/Invalid Key:/);
+  });
+
+  it("should not throw invalid key error when not strict", () => {
+    const nonthrowable = () => {
+      const o = { a: "string", b: "string" };
+      const r = xyz.object({ a: xyz.string() }).parse(o);
+    };
+
+    expect(nonthrowable).not.toThrow();
   });
 });

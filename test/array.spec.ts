@@ -3,7 +3,7 @@ import xyz from "../src";
 describe("Array", () => {
   it("should parse", () => {
     const a = ["string"];
-    const r = xyz.array(xyz.string()).parse(a);
+    const r = xyz.array(xyz.string().transform(Number)).parse(a);
 
     expect(r).toMatchObject(a);
   });

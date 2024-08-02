@@ -1,21 +1,24 @@
-import { XYZType } from "./type";
+import { XYZBaseType, config, common, BaseTypes } from "./base";
 
-export class XYZArray<Schema extends XYZType> extends XYZType<
-  ReturnType<Schema["parse"]>[],
-  ReturnType<Schema["parse"]>[]
-> {
-  constructor(schema: Schema) {
-    super();
-    this._primitive = "object";
+type XYZArray<TType extends BaseTypes> = XYZBaseType<
+  Array<ReturnType<TType["parse"]>>,
+  Array<ReturnType<TType["parse"]>>
+>;
 
-    this._checks.push((input) => {
-      input.forEach((input) => {
-        const result = schema.safeParse(input);
+export function array<T extends BaseTypes>(def: T): XYZArray<T> {
+  const cfg = config("object");
 
-        if (result.errors) {
-          this._errors.push(...result.errors);
-        }
-      });
+  cfg._checks.push((input) => {
+    input.forEach((e: unknown, i: number) => {
+      const result = def.safeParse(e);
+
+      if (result.errors) {
+        cfg._errors.push(...result.errors);
+      } else {
+        input[i] = result.value;
+      }
     });
-  }
+  });
+
+  return { ...common(cfg) };
 }

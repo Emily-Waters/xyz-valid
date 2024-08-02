@@ -11,14 +11,14 @@ describe("Number", () => {
   it("should throw type error", () => {
     const throwable = () => {
       const n = "5";
-      xyz.number().parse(n);
+      const r = xyz.number().parse(n);
     };
 
     expect(throwable).toThrow(/Invalid Type:/);
 
     const throwable2 = () => {
       const n = "5";
-      xyz.number().min(1).max(2).parse(n);
+      const r = xyz.number().min(1).max(2).parse(n);
     };
 
     expect(throwable2).toThrow(/Invalid Type:/);
@@ -26,10 +26,16 @@ describe("Number", () => {
 
   it("should allow optional", () => {
     const nonthrowable = () => {
-      xyz.number().optional().parse(undefined);
+      const r = xyz.number().optional().parse(1);
     };
 
     expect(nonthrowable).not.toThrow();
+
+    const nonthrowable2 = () => {
+      const r = xyz.number().optional().parse(undefined);
+    };
+
+    expect(nonthrowable2).not.toThrow();
   });
 
   it("should allow values between min and max range", () => {

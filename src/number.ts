@@ -1,29 +1,30 @@
+import { XYZBaseType, config, common } from "./base";
 import XYZErrors from "./errors";
-import { XYZType } from "./type";
 
-export class XYZNumber extends XYZType<number, number> {
-  constructor() {
-    super();
-    this._primitive = "number";
-  }
+type XYZNumber = XYZBaseType<number, number> & { min: (min: number) => XYZNumber; max: (max: number) => XYZNumber };
 
-  min(n: number) {
-    this._checks.push((input) => {
-      if (input < n) {
-        this._errors.push(XYZErrors.invalidLength(n, input, "min"));
-      }
-    });
+export function number(): XYZNumber {
+  const cfg = config("number");
 
-    return this;
-  }
+  return {
+    ...common(cfg),
+    min(min: number) {
+      cfg._checks.push((input) => {
+        if (input < min) {
+          cfg._errors.push(XYZErrors.invalidLength(min, input, "min"));
+        }
+      });
 
-  max(n: number) {
-    this._checks.push((input) => {
-      if (input > n) {
-        this._errors.push(XYZErrors.invalidLength(n, input, "max"));
-      }
-    });
+      return this;
+    },
+    max(max: number) {
+      cfg._checks.push((input) => {
+        if (input > max) {
+          cfg._errors.push(XYZErrors.invalidLength(max, input, "max"));
+        }
+      });
 
-    return this;
-  }
+      return this;
+    },
+  };
 }

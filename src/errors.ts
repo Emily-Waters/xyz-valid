@@ -19,8 +19,8 @@ export default class XYZErrors {
     return `Invalid Regex: Expected ${expected}, received ${received}`;
   }
 
-  static invalidKey<T>(expected: T, key: string) {
-    return `Invalid Key: "${key}" is not in ${expected}`;
+  static invalidKeys(keys: string[]) {
+    return `Invalid Key: Unrecognized keys "${keys.join(", ")}"`;
   }
 
   static invalidEnumMember<T extends Array<string>>(expected: T, received: string) {

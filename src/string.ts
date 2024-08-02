@@ -1,29 +1,30 @@
+import { XYZBaseType, config, common } from "./base";
 import XYZErrors from "./errors";
-import { XYZType } from "./type";
 
-export class XYZString<TInput extends string, TOutput extends string> extends XYZType<TInput, TOutput, any> {
-  constructor() {
-    super();
-    this._primitive = "string";
-  }
+type XYZString = XYZBaseType<string, string> & { min: (min: number) => XYZString; max: (max: number) => XYZString };
 
-  min(min: number) {
-    this._checks.push((input) => {
-      if (input.length < min) {
-        this._errors.push(XYZErrors.invalidLength(min, input.length, "min"));
-      }
-    });
+export function string(): XYZString {
+  const cfg = config("string");
 
-    return this;
-  }
+  return {
+    ...common(cfg),
+    min(min: number) {
+      cfg._checks.push((input) => {
+        if (input.length < min) {
+          cfg._errors.push(XYZErrors.invalidLength(min, input.length, "min"));
+        }
+      });
 
-  max(max: number) {
-    this._checks.push((input) => {
-      if (input.length > max) {
-        this._errors.push(XYZErrors.invalidLength(max, input.length, "max"));
-      }
-    });
+      return this;
+    },
+    max(max: number) {
+      cfg._checks.push((input) => {
+        if (input.length > max) {
+          cfg._errors.push(XYZErrors.invalidLength(max, input.length, "max"));
+        }
+      });
 
-    return this;
-  }
+      return this;
+    },
+  };
 }

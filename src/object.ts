@@ -1,55 +1,47 @@
+import { XYZBaseType, config, common } from "./base";
 import XYZErrors from "./errors";
-import { InferType, XYZType } from "./type";
 
-export class XYZObject<Shape extends XYZType["_def"]> extends XYZType<
-  { [K in keyof Shape]: InferType<Shape[K]> },
-  { [K in keyof Shape]: InferType<Shape[K]> },
-  Shape
-> {
-  private _strict: boolean = false;
+type Def = { [x: string]: XYZBaseType | ReturnType<XYZBaseType["optional"]> };
 
-  constructor(shape: Shape) {
-    super();
-    this._primitive = "object";
-    this._def = shape;
+type XYZObject<TDef extends Def> = XYZBaseType<
+  { [K in keyof TDef]: ReturnType<TDef[K]["parse"]> },
+  { [K in keyof TDef]: ReturnType<TDef[K]["parse"]> }
+> & { strict: () => Omit<XYZObject<TDef>, "strict"> };
 
-    this._checks.push((input) => {
-      if (this._strict) {
-        const inputKeys = Object.keys(input);
-        const shapeKeys = Object.keys(shape);
-        const optionalKeys = Object.values(shape).filter((e) => e._optional);
+export function object<TDef extends Def>(def: TDef): XYZObject<TDef> {
+  const cfg = config("object");
+  let strict = false;
 
-        const inputKeysLength = inputKeys.length;
-        const shapeKeysLength = shapeKeys.length;
-        const optionalKeysLength = optionalKeys.length;
-        const isInputKeysLengthGreater = inputKeysLength > shapeKeysLength;
-        const isInputKeysLengthLess = inputKeysLength < shapeKeysLength - optionalKeysLength;
-        const areKeysInvalidLength = isInputKeysLengthGreater || isInputKeysLengthLess;
-
-        if (areKeysInvalidLength) {
-          this._errors.push(XYZErrors.invalidStrict(shape, input));
-        } else {
-          for (const key of inputKeys) {
-            if (!(key in shape)) {
-              this._errors.push(XYZErrors.invalidKey(shape, key));
-            }
-          }
+  cfg._checks.push((input) => {
+    if (strict) {
+      const unrecognizedKeys = [];
+      for (const key in input) {
+        if (!def[key]) {
+          unrecognizedKeys.push(key);
         }
       }
 
-      for (const key in shape) {
-        const result = shape[key].safeParse(input[key]);
-
-        if (result.errors) {
-          this._errors.push(...result.errors);
-        }
+      if (unrecognizedKeys.length) {
+        cfg._errors.push(XYZErrors.invalidKeys(unrecognizedKeys));
       }
-    });
-  }
+    }
 
-  strict() {
-    this._strict = true;
+    for (const key in def) {
+      const result = def[key].safeParse(input[key]);
 
-    return this;
-  }
+      if (result.errors) {
+        cfg._errors.push(...result.errors);
+      } else {
+        input[key] = result;
+      }
+    }
+  });
+
+  return {
+    ...common(cfg),
+    strict() {
+      strict = true;
+      return common(cfg);
+    },
+  };
 }
