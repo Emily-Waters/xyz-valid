@@ -9,13 +9,15 @@ export function array<T extends BaseTypes>(def: T): XYZArray<T> {
   const cfg = config("object");
 
   cfg._checks.push((input) => {
-    input.forEach((e: unknown, i: number) => {
+    cfg._output = [];
+
+    input.forEach((e: unknown) => {
       const result = def.safeParse(e);
 
       if (result.errors) {
         cfg._errors.push(...result.errors);
       } else {
-        input[i] = result.value;
+        cfg._output.push(result.value);
       }
     });
   });

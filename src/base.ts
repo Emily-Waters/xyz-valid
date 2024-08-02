@@ -31,6 +31,9 @@ export type XYZConfig<TInput = any, TOutput = any> = {
 };
 
 export function typeCheck<TConfig extends XYZConfig>(config: TConfig, input: unknown): input is TConfig["_output"] {
+  config._input = input;
+  config._output = input;
+
   if (typeof input === config._type) {
     return true;
   } else if (config._optional && input === undefined) {
@@ -49,17 +52,13 @@ export function safeParse<TConfig extends XYZConfig, TInput>(
   config: TConfig,
   input: TInput
 ): { errors: null; value: TConfig["_output"] } | { errors: string[]; value: TConfig["_input"] } {
-  config._input = input;
-
   if (typeCheck(config, input)) {
     config._checks.forEach((check) => check(input));
-    config._output = input;
 
     if (!config._errors.length) {
       if (config._transform) {
         config._output = config._transform(config._output);
       }
-
       return { errors: null, value: config._output };
     }
   }
@@ -68,13 +67,13 @@ export function safeParse<TConfig extends XYZConfig, TInput>(
 }
 
 export function parse<TConfig extends XYZConfig, TInput>(config: TConfig, input: TInput) {
-  const { errors, value } = safeParse(config, input);
+  const result = safeParse(config, input);
 
-  if (errors) {
-    throw new Error(errors.join("\n"));
+  if (result.errors) {
+    throw new Error(result.errors.join("\n"));
   }
 
-  return value;
+  return result.value;
 }
 
 export function config<T extends Primitives>(type: T): XYZConfig {

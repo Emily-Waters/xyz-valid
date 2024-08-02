@@ -1,7 +1,7 @@
-import { XYZBaseType, config, common } from "./base";
+import { XYZBaseType, config, common, BaseTypes } from "./base";
 import XYZErrors from "./errors";
 
-type Def = { [x: string]: XYZBaseType | ReturnType<XYZBaseType["optional"]> };
+type Def = { [x: string]: BaseTypes };
 
 type XYZObject<TDef extends Def> = XYZBaseType<
   { [K in keyof TDef]: ReturnType<TDef[K]["parse"]> },
@@ -13,6 +13,8 @@ export function object<TDef extends Def>(def: TDef): XYZObject<TDef> {
   let strict = false;
 
   cfg._checks.push((input) => {
+    cfg._output = {};
+
     if (strict) {
       const unrecognizedKeys = [];
       for (const key in input) {
@@ -32,7 +34,7 @@ export function object<TDef extends Def>(def: TDef): XYZObject<TDef> {
       if (result.errors) {
         cfg._errors.push(...result.errors);
       } else {
-        input[key] = result;
+        cfg._output[key] = result.value;
       }
     }
   });

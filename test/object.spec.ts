@@ -58,6 +58,38 @@ describe("Object", () => {
     expect(nonthrowable).not.toThrow();
   });
 
+  it("should allow nested nullable properties", () => {
+    const nonthrowable = () => {
+      const o = { a: null };
+      const r = xyz.object({ a: xyz.string().nullable() }).parse(o);
+    };
+
+    expect(nonthrowable).not.toThrow();
+  });
+
+  it("should allow nested transformable properties", () => {
+    const nonthrowable = () => {
+      const o = { a: "1" };
+      const r = xyz.object({ a: xyz.string().transform(Number) }).parse(o);
+    };
+
+    expect(nonthrowable).not.toThrow();
+  });
+
+  it("should allow transform", () => {
+    const nonthrowable = () => {
+      const o = { a: "1" };
+      const r = xyz
+        .object({ a: xyz.string() })
+        .transform((o) => o.a)
+        .parse(o);
+
+      expect(r).toBe("1");
+    };
+
+    expect(nonthrowable).not.toThrow();
+  });
+
   it("should not throw invalid strict error on optional keys", () => {
     const throwable = () => {
       const o = { a: "string", b: "string" };

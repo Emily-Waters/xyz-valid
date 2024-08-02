@@ -3,9 +3,9 @@ import xyz from "../src";
 describe("Array", () => {
   it("should parse", () => {
     const a = ["string"];
-    const r = xyz.array(xyz.string().transform(Number)).parse(a);
+    const r = xyz.array(xyz.string()).parse(a);
 
-    expect(r).toMatchObject(a);
+    expect(r).toMatchObject(["string"]);
   });
 
   it("should throw type error", () => {
