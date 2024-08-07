@@ -1,4 +1,5 @@
 import { array } from "./array";
+import { boolean } from "./boolean";
 import { enumValidator } from "./enum";
 import { literal } from "./literal";
 import { number } from "./number";
@@ -14,6 +15,7 @@ const xyz = {
   object,
   array,
   enum: enumValidator,
+  boolean,
 };
 
 export default xyz;

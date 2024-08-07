@@ -1,6 +1,6 @@
 import XYZErrors from "./errors";
 
-export type Primitives = "string" | "number" | "object";
+export type Primitives = "string" | "number" | "object" | "boolean";
 
 type ErrorType = string;
 
