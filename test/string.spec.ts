@@ -74,9 +74,17 @@ describe("String", () => {
   });
 
   it("should allow default", () => {
-    const defaultValue = "string";
+    const defaultValue = "foo";
     const r = xyz.string().optional().default(defaultValue).parse(undefined);
 
     expect(r).toBe(defaultValue);
+  });
+
+  it("should not replace input with default", () => {
+    const defaultValue = "foo";
+    const input = "bar";
+    const r = xyz.string().optional().default(defaultValue).parse("bar");
+
+    expect(r).toBe(input);
   });
 });

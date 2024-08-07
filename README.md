@@ -27,6 +27,7 @@ A lightweight library for type validation both in the browser and node environme
     - [Optional](#optional)
     - [Nullable](#nullable)
     - [Transform](#transform)
+    - [Default](#default)
 
 ## Assertions
 
@@ -207,4 +208,14 @@ xyz
   .string()
   .transform((str) => parseInt(str))
   .parse("1");
+```
+
+### Default
+
+```typescript
+// Returns "foo"
+xyz.string().optional().default("foo").parse(undefined);
+
+// Returns "bar"
+xyz.string().optional().default("foo").parse("bar");
 ```
