@@ -6,7 +6,10 @@ type Def = { [x: string]: BaseTypes };
 type XYZObject<TDef extends Def> = XYZBaseType<
   { [K in keyof TDef]: ReturnType<TDef[K]["parse"]> },
   { [K in keyof TDef]: ReturnType<TDef[K]["parse"]> }
-> & { strict: () => Omit<XYZObject<TDef>, "strict"> };
+> & {
+  strict: () => Pick<XYZObject<TDef>, "parse" | "safeParse">;
+  compare: (cb: (obj: { [K in keyof TDef]: ReturnType<TDef[K]["parse"]> }) => boolean) => XYZObject<TDef>;
+};
 
 export function object<TDef extends Def>(def: TDef): XYZObject<TDef> {
   const cfg = config("object");
@@ -43,7 +46,16 @@ export function object<TDef extends Def>(def: TDef): XYZObject<TDef> {
     ...common(cfg),
     strict() {
       strict = true;
-      return common(cfg);
+      return this;
+    },
+    compare(cb) {
+      cfg._checks.push((input) => {
+        if (!cb(input)) {
+          cfg._errors.push(XYZErrors.invalidCompare());
+        }
+      });
+
+      return this;
     },
   };
 }

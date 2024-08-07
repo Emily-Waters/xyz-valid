@@ -116,4 +116,30 @@ describe("Object", () => {
 
     expect(nonthrowable).not.toThrow();
   });
+
+  it("should compare", () => {
+    const nonthrowable = () => {
+      const o = { a: "string", b: "string" };
+      const r = xyz
+        .object({ a: xyz.string(), b: xyz.string() })
+        .compare((obj) => {
+          return obj.a === obj.b;
+        })
+        .parse(o);
+    };
+
+    expect(nonthrowable).not.toThrow();
+  });
+
+  it("should throw invalid compare error", () => {
+    const throwable = () => {
+      const o = { a: "string", b: "other" };
+      const r = xyz
+        .object({ a: xyz.string(), b: xyz.string() })
+        .compare((obj) => obj.a === obj.b)
+        .parse(o);
+    };
+
+    expect(throwable).toThrow(/Invalid Compare/);
+  });
 });

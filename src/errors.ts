@@ -26,4 +26,8 @@ export default class XYZErrors {
   static invalidEnumMember<T extends Array<string>>(expected: T, received: string) {
     return `Invalid Enum Member: Expected "${expected.join(`" | "`)}", received "${received}"`;
   }
+
+  static invalidCompare() {
+    return `Invalid Compare`;
+  }
 }
