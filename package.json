@@ -1,11 +1,21 @@
 {
   "name": "xyz-valid",
-  "version": "1.0.1",
-  "description": "",
+  "version": "1.0.2",
+  "description": "Lightweight Typescript schema validation library",
   "main": "dist/index.js",
   "files": [
     "/dist/*"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Emily-Waters/xyz-valid.git"
+  },
+  "author": "emilywaters",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Emily-Waters/xyz-valid/issues"
+  },
+  "homepage": "https://github.com/Emily-Waters/xyz-valid",
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
@@ -13,8 +23,6 @@
     "prepublish": "npm run build -- --dts --minify"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
   "devDependencies": {
     "@types/jest": "^29.5.12",
     "concurrently": "^8.2.2",
