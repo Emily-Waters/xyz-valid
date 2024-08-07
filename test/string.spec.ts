@@ -72,4 +72,11 @@ describe("String", () => {
 
     expect(throwable).toThrow(/Invalid Length:/);
   });
+
+  it("should allow default", () => {
+    const defaultValue = "string";
+    const r = xyz.string().optional().default(defaultValue).parse(undefined);
+
+    expect(r).toBe(defaultValue);
+  });
 });

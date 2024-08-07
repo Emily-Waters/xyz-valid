@@ -11,7 +11,8 @@ export type XYZBaseType<TInput = unknown, TOutput = unknown> = {
   nullable: () => Omit<XYZBaseType<TInput | null, TOutput | null>, "optional" | "nullable">;
   transform: <TTransform extends (input: TOutput) => any>(
     t: TTransform
-  ) => Omit<XYZBaseType<TInput, ReturnType<TTransform>>, "optional" | "transform" | "nullable">;
+  ) => Pick<XYZBaseType<TInput, TOutput>, "parse" | "safeParse">;
+  default: <TDefault extends TInput>(value: TDefault) => Pick<XYZBaseType<TInput, TOutput>, "parse" | "safeParse">;
 };
 export type BaseTypes =
   | XYZBaseType
@@ -28,6 +29,7 @@ export type XYZConfig<TInput = any, TOutput = any> = {
   _type: Primitives;
   _nullable: boolean;
   _transform?: <NewOutput>(input: TOutput) => NewOutput;
+  _default?: TInput;
 };
 
 export function typeCheck<TConfig extends XYZConfig>(config: TConfig, input: unknown): input is TConfig["_output"] {
@@ -59,6 +61,11 @@ export function safeParse<TConfig extends XYZConfig, TInput>(
       if (config._transform) {
         config._output = config._transform(config._output);
       }
+
+      if (config._output === undefined && config._default) {
+        config._output = config._default;
+      }
+
       return { errors: null, value: config._output };
     }
   }
@@ -98,7 +105,7 @@ export function common<TConfig extends XYZConfig>(cfg: TConfig): XYZBaseType<TCo
     },
     optional() {
       cfg._optional = true;
-      return { parse: this.parse, safeParse: this.safeParse, transform: this.transform };
+      return { parse: this.parse, safeParse: this.safeParse, transform: this.transform, default: this.default };
     },
     transform(t) {
       cfg._transform = t;
@@ -106,7 +113,11 @@ export function common<TConfig extends XYZConfig>(cfg: TConfig): XYZBaseType<TCo
     },
     nullable() {
       cfg._nullable = true;
-      return { parse: this.parse, safeParse: this.safeParse, transform: this.transform };
+      return { parse: this.parse, safeParse: this.safeParse, transform: this.transform, default: this.default };
+    },
+    default<TDefault extends TConfig["_input"]>(d: TDefault) {
+      cfg._default = d;
+      return { parse: this.parse, safeParse: this.safeParse };
     },
   };
 }
