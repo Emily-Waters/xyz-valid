@@ -41,26 +41,4 @@ describe("Regex", () => {
 
     expect(throwable).toThrow(/Invalid Type:/);
   });
-
-  it("should allow values between min and max range", () => {
-    const nonthrowable = () => {
-      xyz.regex(/ab/).min(1).max(3).parse("ab");
-    };
-
-    expect(nonthrowable).not.toThrow();
-  });
-
-  it("should throw invalid length error", () => {
-    const throwable = () => {
-      xyz.regex(/a/).min(2).max(3).parse("a");
-    };
-
-    expect(throwable).toThrow(/Invalid Length:/);
-
-    const throwable2 = () => {
-      xyz.regex(/abc/).min(1).max(3).parse("abcabc");
-    };
-
-    expect(throwable2).toThrow(/Invalid Length:/);
-  });
 });

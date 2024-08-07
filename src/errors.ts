@@ -3,8 +3,16 @@ export default class XYZErrors {
     return `Invalid Type: Expected ${expected}, received ${received}`;
   }
 
-  static invalidLength(expected: number, received: number, mod: "min" | "max") {
-    return `Invalid Length: Expected ${mod} length of ${expected} but received length ${received}`;
+  static invalidMin(expected: number, received: number, mod: "length" | "range") {
+    return `Invalid Min: Expected min ${mod} ${expected}, received ${received}`;
+  }
+
+  static invalidMax(expected: number, received: number, mod: "length" | "range") {
+    return `Invalid Max: Expected max ${mod} ${expected}, received ${received}`;
+  }
+
+  static invalidLength(expected: number, received: number) {
+    return `Invalid Length: Expected length ${expected}, received length ${received}`;
   }
 
   static invalidLiteral<T>(expected: T, received: any) {

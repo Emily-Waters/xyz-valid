@@ -11,7 +11,7 @@ export function number(): XYZNumber {
     min(min: number) {
       cfg._checks.push((input) => {
         if (input < min) {
-          cfg._errors.push(XYZErrors.invalidLength(min, input, "min"));
+          cfg._errors.push(XYZErrors.invalidMin(min, input, "range"));
         }
       });
 
@@ -20,7 +20,7 @@ export function number(): XYZNumber {
     max(max: number) {
       cfg._checks.push((input) => {
         if (input > max) {
-          cfg._errors.push(XYZErrors.invalidLength(max, input, "max"));
+          cfg._errors.push(XYZErrors.invalidMax(max, input, "range"));
         }
       });
 

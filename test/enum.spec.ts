@@ -1,6 +1,6 @@
 import xyz from "../src";
 
-describe("Array", () => {
+describe("Enum", () => {
   it("should parse", () => {
     const s = "a";
     const r = xyz.enum([s, "b", "c"]).parse(s);

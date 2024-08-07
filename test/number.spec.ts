@@ -46,17 +46,19 @@ describe("Number", () => {
     expect(nonthrowable).not.toThrow();
   });
 
-  it("should throw invalid length error", () => {
+  it("should throw invalid min error", () => {
     const throwable = () => {
-      xyz.number().min(1).max(3).parse(0);
+      xyz.number().min(1).parse(0);
     };
 
-    expect(throwable).toThrow(/Invalid Length:/);
+    expect(throwable).toThrow(/Invalid Min:/);
+  });
 
-    const throwable2 = () => {
-      xyz.number().min(1).max(3).parse(4);
+  it("should throw invalid max error", () => {
+    const throwable = () => {
+      xyz.number().max(0).parse(1);
     };
 
-    expect(throwable2).toThrow(/Invalid Length:/);
+    expect(throwable).toThrow(/Invalid Max:/);
   });
 });
