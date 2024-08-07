@@ -11,7 +11,7 @@ export type XYZBaseType<TInput = unknown, TOutput = unknown> = {
   nullable: () => Omit<XYZBaseType<TInput | null, TOutput | null>, "optional" | "nullable">;
   transform: <TTransform extends (input: TOutput) => any>(
     t: TTransform
-  ) => Pick<XYZBaseType<TInput, TOutput>, "parse" | "safeParse">;
+  ) => Pick<XYZBaseType<TInput, ReturnType<TTransform>>, "parse" | "safeParse">;
   default: <TDefault extends TInput>(value: TDefault) => Pick<XYZBaseType<TInput, TOutput>, "parse" | "safeParse">;
 };
 export type BaseTypes =
