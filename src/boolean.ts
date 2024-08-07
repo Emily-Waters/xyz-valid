@@ -1,6 +1,6 @@
-import { config, common } from "./base";
+import { config, common, XYZBaseType } from "./base";
 
-export function boolean() {
+export function boolean(): XYZBaseType<boolean, boolean> {
   const cfg = config("boolean");
 
   return { ...common(cfg) };
