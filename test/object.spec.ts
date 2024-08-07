@@ -142,4 +142,17 @@ describe("Object", () => {
 
     expect(throwable).toThrow(/Invalid Compare/);
   });
+
+  it("should allow extend", () => {
+    const o = { a: "string", b: "string" };
+    const original = xyz.object({ a: xyz.string(), b: xyz.string() });
+    const o2 = { a: 1, b: "string", c: "string" };
+    const ext = original.extend({ a: xyz.number(), c: xyz.string() });
+
+    const r = original.parse(o);
+    const r2 = ext.parse(o2);
+
+    expect(r).toMatchObject(o);
+    expect(r2).toMatchObject(o2);
+  });
 });

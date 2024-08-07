@@ -9,6 +9,15 @@ type XYZObject<TDef extends Def> = XYZBaseType<
 > & {
   strict: () => Pick<XYZObject<TDef>, "parse" | "safeParse">;
   compare: (cb: (obj: { [K in keyof TDef]: ReturnType<TDef[K]["parse"]> }) => boolean) => XYZObject<TDef>;
+  extend: <TDefExtend extends Def>(
+    ext: TDefExtend
+  ) => XYZObject<{
+    [K in keyof (TDef & TDefExtend)]: K extends keyof TDefExtend
+      ? TDefExtend[K]
+      : K extends keyof TDef
+        ? TDef[K]
+        : never;
+  }>;
 };
 
 export function object<TDef extends Def>(def: TDef): XYZObject<TDef> {
@@ -56,6 +65,9 @@ export function object<TDef extends Def>(def: TDef): XYZObject<TDef> {
       });
 
       return this;
+    },
+    extend(ext) {
+      return object({ ...def, ...ext });
     },
   };
 }
