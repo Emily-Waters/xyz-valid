@@ -8,14 +8,14 @@ import { regex } from "./regex";
 import { string } from "./string";
 
 const xyz = {
-  string,
+  array,
+  boolean,
+  enum: enumValidator,
   literal,
-  regex,
   number,
   object,
-  array,
-  enum: enumValidator,
-  boolean,
+  regex,
+  string,
 };
 
 export default xyz;
