@@ -1,12 +1,16 @@
 {
   "name": "xyz-valid",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "files": [
+    "/dist/*"
+  ],
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
-    "test": "npx jest --watch"
+    "test": "npx jest --watch",
+    "prepublish": "npm run build -- --dts --minify"
   },
   "keywords": [],
   "author": "",
